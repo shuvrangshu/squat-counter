@@ -105,7 +105,7 @@ function onResults(results) {
             console.log(hip_coord);
             console.log(parseFloat(hip_coord["visibility"]).toFixed(2));
             console.log(parseFloat(hip_coord["x"]).toFixed(2));
-            htmlData += "<div>Hip : " + parseFloat(hip_coord["x"]).toFixed(2) + "</div>";
+            htmlData += "<div>Hip : " + parseFloat(hip_coord["x"]).toFixed(2) + " / " + parseFloat(hip_coord["y"]).toFixed(2) + "</div>";
         }
 
         let knee_coord = results.poseLandmarks[26];
@@ -113,7 +113,7 @@ function onResults(results) {
             console.log(knee_coord);
             console.log(parseFloat(knee_coord["visibility"]).toFixed(2));
             console.log(parseFloat(knee_coord["x"]).toFixed(2));
-            htmlData += "<div>Knee : " + parseFloat(hip_coord["x"]).toFixed(2) + "</div>";
+            htmlData += "<div>Knee : " + parseFloat(knee_coord["x"]).toFixed(2) + " / " + parseFloat(knee_coord["y"]).toFixed(2) + "</div>";
         }
         squatResultElement.innerHTML = htmlData;
 
