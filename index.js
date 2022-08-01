@@ -44,6 +44,7 @@ const options = {
 const videoElement = document.getElementsByClassName('input_video')[0];
 const canvasElement = document.getElementsByClassName('output_canvas')[0];
 const controlsElement = document.getElementsByClassName('control-panel')[0];
+const squatResultElement = document.getElementsByClassName('squatResult')[0];
 const canvasCtx = canvasElement.getContext('2d');
 // We'll add this to our control panel later, but we'll save it here so we can
 // call tick() each time the graph runs.
@@ -97,6 +98,26 @@ function onResults(results) {
         canvasCtx.drawImage(results.image, 0, 0, canvasElement.width, canvasElement.height);
     }
     if (results.poseLandmarks) {
+        console.log("---------------test------------------");
+        let htmlData = '';
+        let hip_coord = results.poseLandmarks[24];
+        if (parseFloat(hip_coord["visibility"]).toFixed(2) > 0.90) {
+            console.log(hip_coord);
+            console.log(parseFloat(hip_coord["visibility"]).toFixed(2));
+            console.log(parseFloat(hip_coord["x"]).toFixed(2));
+            htmlData += "<div>Hip : " + parseFloat(hip_coord["x"]).toFixed(2) + "</div>";
+        }
+
+        let knee_coord = results.poseLandmarks[26];
+        if (parseFloat(knee_coord["visibility"]).toFixed(2) > 0.90) {
+            console.log(knee_coord);
+            console.log(parseFloat(knee_coord["visibility"]).toFixed(2));
+            console.log(parseFloat(knee_coord["x"]).toFixed(2));
+            htmlData += "<div>Knee : " + parseFloat(hip_coord["x"]).toFixed(2) + "</div>";
+        }
+        squatResultElement.innerHTML = htmlData;
+
+
         drawingUtils.drawConnectors(canvasCtx, results.poseLandmarks, mpPose.POSE_CONNECTIONS, { visibilityMin: 0.65, color: 'white' });
         drawingUtils.drawLandmarks(canvasCtx, Object.values(mpPose.POSE_LANDMARKS_LEFT)
             .map(index => results.poseLandmarks[index]), { visibilityMin: 0.65, color: 'white', fillColor: 'rgb(255,138,0)' });
@@ -122,70 +143,70 @@ pose.onResults(onResults);
 // options.
 new controls
     .ControlPanel(controlsElement, {
-    selfieMode: true,
-    modelComplexity: 1,
-    smoothLandmarks: true,
-    enableSegmentation: false,
-    smoothSegmentation: true,
-    minDetectionConfidence: 0.5,
-    minTrackingConfidence: 0.5,
-    effect: 'background',
-})
+        selfieMode: true,
+        modelComplexity: 1,
+        smoothLandmarks: true,
+        enableSegmentation: false,
+        smoothSegmentation: true,
+        minDetectionConfidence: 0.5,
+        minTrackingConfidence: 0.5,
+        effect: 'background',
+    })
     .add([
-    new controls.StaticText({ title: 'MediaPipe Pose' }),
-    fpsControl,
-    new controls.Toggle({ title: 'Selfie Mode', field: 'selfieMode' }),
-    new controls.SourcePicker({
-        onSourceChanged: () => {
-            // Resets because this model gives better results when reset between
-            // source changes.
-            pose.reset();
-        },
-        onFrame: async (input, size) => {
-            const aspect = size.height / size.width;
-            let width, height;
-            if (window.innerWidth > window.innerHeight) {
-                height = window.innerHeight;
-                width = height / aspect;
-            }
-            else {
-                width = window.innerWidth;
-                height = width * aspect;
-            }
-            canvasElement.width = width;
-            canvasElement.height = height;
-            await pose.send({ image: input });
-        },
-    }),
-    new controls.Slider({
-        title: 'Model Complexity',
-        field: 'modelComplexity',
-        discrete: ['Lite', 'Full', 'Heavy'],
-    }),
-    new controls.Toggle({ title: 'Smooth Landmarks', field: 'smoothLandmarks' }),
-    new controls.Toggle({ title: 'Enable Segmentation', field: 'enableSegmentation' }),
-    new controls.Toggle({ title: 'Smooth Segmentation', field: 'smoothSegmentation' }),
-    new controls.Slider({
-        title: 'Min Detection Confidence',
-        field: 'minDetectionConfidence',
-        range: [0, 1],
-        step: 0.01
-    }),
-    new controls.Slider({
-        title: 'Min Tracking Confidence',
-        field: 'minTrackingConfidence',
-        range: [0, 1],
-        step: 0.01
-    }),
-    new controls.Slider({
-        title: 'Effect',
-        field: 'effect',
-        discrete: { 'background': 'Background', 'mask': 'Foreground' },
-    }),
-])
+        new controls.StaticText({ title: 'MediaPipe Pose' }),
+        fpsControl,
+        new controls.Toggle({ title: 'Selfie Mode', field: 'selfieMode' }),
+        new controls.SourcePicker({
+            onSourceChanged: () => {
+                // Resets because this model gives better results when reset between
+                // source changes.
+                pose.reset();
+            },
+            onFrame: async (input, size) => {
+                const aspect = size.height / size.width;
+                let width, height;
+                if (window.innerWidth > window.innerHeight) {
+                    height = window.innerHeight;
+                    width = height / aspect;
+                }
+                else {
+                    width = window.innerWidth;
+                    height = width * aspect;
+                }
+                canvasElement.width = width;
+                canvasElement.height = height;
+                await pose.send({ image: input });
+            },
+        }),
+        new controls.Slider({
+            title: 'Model Complexity',
+            field: 'modelComplexity',
+            discrete: ['Lite', 'Full', 'Heavy'],
+        }),
+        new controls.Toggle({ title: 'Smooth Landmarks', field: 'smoothLandmarks' }),
+        new controls.Toggle({ title: 'Enable Segmentation', field: 'enableSegmentation' }),
+        new controls.Toggle({ title: 'Smooth Segmentation', field: 'smoothSegmentation' }),
+        new controls.Slider({
+            title: 'Min Detection Confidence',
+            field: 'minDetectionConfidence',
+            range: [0, 1],
+            step: 0.01
+        }),
+        new controls.Slider({
+            title: 'Min Tracking Confidence',
+            field: 'minTrackingConfidence',
+            range: [0, 1],
+            step: 0.01
+        }),
+        new controls.Slider({
+            title: 'Effect',
+            field: 'effect',
+            discrete: { 'background': 'Background', 'mask': 'Foreground' },
+        }),
+    ])
     .on(x => {
-    const options = x;
-    videoElement.classList.toggle('selfie', options.selfieMode);
-    activeEffect = x['effect'];
-    pose.setOptions(options);
-});
+        const options = x;
+        videoElement.classList.toggle('selfie', options.selfieMode);
+        activeEffect = x['effect'];
+        pose.setOptions(options);
+    });
