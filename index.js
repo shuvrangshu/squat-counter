@@ -119,12 +119,14 @@ function onResults(results) {
             knee_coord_y = parseFloat(knee_coord["y"]).toFixed(2);
             htmlData += "<div>Knee : " + parseFloat(knee_coord["x"]).toFixed(2) + " / " + parseFloat(knee_coord["y"]).toFixed(2) + "</div>";
         }
-        if((hip_coord_y - knee_coord_y) < 0.35){
-            htmlData += "Up"; 
+
+        htmlData += "Diff - " + (hip_coord_y - knee_coord_y);
+        if ((hip_coord_y - knee_coord_y) < 0.35) {
+            htmlData += "Up";
         }
 
-        if((hip_coord_y - knee_coord_y) > 0.35){
-            htmlData += "Down"; 
+        if ((hip_coord_y - knee_coord_y) > 0.35) {
+            htmlData += "Down";
         }
 
         squatResultElement.innerHTML = htmlData;
