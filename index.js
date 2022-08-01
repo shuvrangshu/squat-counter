@@ -101,20 +101,32 @@ function onResults(results) {
         console.log("---------------test------------------");
         let htmlData = '';
         let hip_coord = results.poseLandmarks[24];
+        let hip_coord_y;
         if (parseFloat(hip_coord["visibility"]).toFixed(2) > 0.90) {
             console.log(hip_coord);
             console.log(parseFloat(hip_coord["visibility"]).toFixed(2));
             console.log(parseFloat(hip_coord["x"]).toFixed(2));
+            hip_coord_y = parseFloat(hip_coord["y"]).toFixed(2);
             htmlData += "<div>Hip : " + parseFloat(hip_coord["x"]).toFixed(2) + " / " + parseFloat(hip_coord["y"]).toFixed(2) + "</div>";
         }
 
         let knee_coord = results.poseLandmarks[26];
+        let knee_coord_y;
         if (parseFloat(knee_coord["visibility"]).toFixed(2) > 0.90) {
             console.log(knee_coord);
             console.log(parseFloat(knee_coord["visibility"]).toFixed(2));
             console.log(parseFloat(knee_coord["x"]).toFixed(2));
+            knee_coord_y = parseFloat(knee_coord["y"]).toFixed(2);
             htmlData += "<div>Knee : " + parseFloat(knee_coord["x"]).toFixed(2) + " / " + parseFloat(knee_coord["y"]).toFixed(2) + "</div>";
         }
+        if((hip_coord_y - knee_coord_y) < 0.35){
+            htmlData += "Up"; 
+        }
+
+        if((hip_coord_y - knee_coord_y) > 0.35){
+            htmlData += "Down"; 
+        }
+
         squatResultElement.innerHTML = htmlData;
 
 
