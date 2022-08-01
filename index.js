@@ -119,13 +119,13 @@ function onResults(results) {
             knee_coord_y = parseFloat(knee_coord["y"]).toFixed(2);
             htmlData += "<div>Knee : " + parseFloat(knee_coord["x"]).toFixed(2) + " / " + parseFloat(knee_coord["y"]).toFixed(2) + "</div>";
         }
-
-        htmlData += "Diff - " + (hip_coord_y - knee_coord_y);
-        if ((hip_coord_y - knee_coord_y) < 0.35) {
+        let diff = (knee_coord_y - hip_coord_y);
+        htmlData += "Diff - " + parseFloat(diff).toFixed(2) + " <br/>";
+        if (diff > 0.20) {
             htmlData += "Up";
         }
 
-        if ((hip_coord_y - knee_coord_y) > 0.35) {
+        if (diff < 0.20) {
             htmlData += "Down";
         }
 
